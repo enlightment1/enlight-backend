@@ -1,11 +1,11 @@
-const router = require('express').Router();
-const { requireAuth } = require('../middleware/auth');
 const { supabaseAdmin } = require('../lib/supabase');
-
-router.get('/me', requireAuth, async (req, res) => {
-  const { data, error } = await supabaseAdmin.from('profiles').select('*').eq('id', req.user.id).single();
-  if (error) return res.status(400).json({ error: error.message });
-  res.json(data);
-});
-
-module.exports = router;
+module.exports = {
+  requireAuth: async (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'Missing token' });
+    const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+    if (error || !user) return res.status(401).json({ error: 'Invalid token' });
+    req.user = user;
+    next();
+  }
+};

@@ -12,7 +12,7 @@ const tradesRoutes = require('./routes/trades');
 
 const app = express();
 app.use(helmet());
-app.use(cors({ origin: '*' }));  // allow frontend from any origin (or set your domain)
+app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '10mb' }));
 
 app.use('/api/auth', authRoutes);
